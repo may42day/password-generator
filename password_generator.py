@@ -80,8 +80,29 @@ class PasswordGenerator():
             self.numbers_part += random.choice(self.numbers)
 
 
+class Database():
+    note_for_db = ''
+
+    def create_database(self):
+        conn = sqlite3.connect('passwords_db.db')
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name='passwords'")
+        if cursor.fetchone()[0] != 1 :
+            cursor.execute("CREATE TABLE passwords (password TEXT, note TEXT)")
+
+        conn.commit()
+        conn.close()
+
+
     def save_password(self):
-        pass
+        conn = sqlite3.connect('passwords_db.db')
+        cursor = conn.cursor()
+
+        cursor.execute("INSERT INTO passwords VALUES (?, ?)", [pw.password, self.note_for_db])
+
+        conn.commit()
+        conn.close()
 
 
     def show_saved_passwords(slef):
@@ -93,7 +114,11 @@ class PasswordGenerator():
 
 
 pw = PasswordGenerator()
+db = Database()
 pw.generate_password()
+db.create_database()
+
+
 
 
 
